@@ -1,0 +1,13 @@
+# WhatsApp API Python Wrapper - Complete Dependencies
+# ====================================================
+# 
+# This file contains ALL dependencies (core + dev + docs + async).
+# Install with: pip install -r requirements-all.txt
+#
+# Use this for complete development environment setup.
+
+# Include all requirement files
+-r requirements.txt
+-r requirements-dev.txt
+-r requirements-docs.txt
+-r requirements-async.txt

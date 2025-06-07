@@ -1,0 +1,16 @@
+# WhatsApp API Python Wrapper - Async Dependencies
+# ==================================================
+# 
+# This file contains optional dependencies for async support.
+# Install with: pip install -r requirements-async.txt
+
+# Include core requirements
+-r requirements.txt
+
+# Async Support
+# -------------
+# HTTP/2 support for httpx
+httpx[http2]>=0.24.0,<1.0.0
+
+# Async file operations
+aiofiles>=23.0.0,<25.0.0

@@ -1,0 +1,22 @@
+# WhatsApp API Python Wrapper - Documentation Dependencies
+# =========================================================
+# 
+# This file contains dependencies for building documentation.
+# Install with: pip install -r requirements-docs.txt
+
+# Include core requirements
+-r requirements.txt
+
+# Documentation Tools
+# -------------------
+# Static site generator for documentation
+mkdocs>=1.4.0,<2.0.0
+
+# Material theme for MkDocs
+mkdocs-material>=9.0.0,<10.0.0
+
+# Python API documentation generator
+mkdocstrings[python]>=0.20.0,<1.0.0
+
+# Include external markdown files
+markdown-include>=0.8.0,<1.0.0
