@@ -413,7 +413,7 @@ flake8 whatsapp_api_wrapper/ tests/
 
 ## Requirements
 
-- **Python 3.8+**
+- **Python 3.10+**
 - **WhatsApp Web API server** (from [`../whatsapp-api/`](../whatsapp-api/) directory) running at `http://localhost:3000`
   - This is the underlying Node.js API that this wrapper communicates with
   - Must be running before using this Python wrapper

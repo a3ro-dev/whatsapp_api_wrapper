@@ -42,7 +42,7 @@ The wrapper communicates with a local Node.js server that handles the actual Wha
 
 ### Prerequisites
 
-1. **Python 3.8+** is required
+1. **Python 3.10+** is required
 2. **WhatsApp API Server** must be running at `http://localhost:3000`
 3. **Docker & Docker Compose** for running the API server
 

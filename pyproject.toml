@@ -29,7 +29,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 keywords = ["whatsapp", "api", "wrapper", "messaging", "chat", "automation", "bot", "whatsapp-web", "pydantic", "httpx"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.24.0,<1.0.0",
     "pydantic>=2.0.0,<3.0.0",
@@ -115,7 +115,7 @@ ensure_newline_before_comments = true
 skip_glob = ["whatsapp-api/*"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
