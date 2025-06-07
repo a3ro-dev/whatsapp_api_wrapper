@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "whatsapp-api-py"
-version = "1.0.1"
+version = "1.0.2"
 description = "A comprehensive, production-ready Python wrapper around the WhatsApp Web API with strongly-typed interfaces, error handling, and automatic retries"
 readme = "README.md"
 license = "MIT"
