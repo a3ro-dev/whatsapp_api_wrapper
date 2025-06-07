@@ -52,8 +52,8 @@ The Python wrapper requires the underlying Node.js WhatsApp API server to be run
 
 ```bash
 # Clone the repository if you haven't already
-git clone https://github.com/a3ro-dev/waSpammer.git
-cd waSpammer
+git clone https://github.com/a3ro-dev/whatsapp_api_wrapper.git
+cd whatsapp_api_wrapper
 
 # Navigate to the WhatsApp API directory
 cd whatsapp-api
