@@ -1,0 +1,173 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "whatsapp-api-py"
+version = "1.0.0"
+description = "A comprehensive, production-ready Python wrapper around the WhatsApp Web API with strongly-typed interfaces, error handling, and automatic retries"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Akshat Kushwaha", email = "akshatsingh14272@outlook.com"}
+]
+maintainers = [
+    {name = "Akshat Kushwaha", email = "akshatsingh14272@outlook.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Chat",
+    "Topic :: Communications :: Email",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+    "Typing :: Typed",
+]
+keywords = ["whatsapp", "api", "wrapper", "messaging", "chat", "automation", "bot", "whatsapp-web", "pydantic", "httpx"]
+requires-python = ">=3.8"
+dependencies = [
+    "httpx>=0.24.0,<1.0.0",
+    "pydantic>=2.0.0,<3.0.0",
+    "tenacity>=8.0.0,<9.0.0",
+    "typing-extensions>=4.0.0;python_version<'3.10'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0,<9.0.0",
+    "pytest-mock>=3.0.0,<4.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "pytest-cov>=4.0.0,<6.0.0",
+    "black>=23.0.0,<25.0.0",
+    "isort>=5.0.0,<6.0.0",
+    "flake8>=6.0.0,<8.0.0",
+    "mypy>=1.0.0,<2.0.0",
+    "pre-commit>=3.0.0,<4.0.0",
+    "responses>=0.23.0,<1.0.0",
+]
+docs = [
+    "mkdocs>=1.4.0,<2.0.0",
+    "mkdocs-material>=9.0.0,<10.0.0",
+    "mkdocstrings[python]>=0.20.0,<1.0.0",
+    "markdown-include>=0.8.0,<1.0.0",
+]
+async = [
+    "httpx[http2]>=0.24.0,<1.0.0",
+    "aiofiles>=23.0.0,<25.0.0",
+]
+all = [
+    "whatsapp-api-py[dev,docs,async]",
+]
+
+[project.urls]
+Homepage = "https://github.com/a3ro-dev/whatsapp_api_wrapper"
+Documentation = "https://github.com/a3ro-dev/whatsapp_api_wrapper/blob/main/docs/comprehensive-guide.md"
+Repository = "https://github.com/a3ro-dev/whatsapp_api_wrapper.git"
+"Bug Tracker" = "https://github.com/a3ro-dev/whatsapp_api_wrapper/issues"
+"Source Code" = "https://github.com/a3ro-dev/whatsapp_api_wrapper"
+Changelog = "https://github.com/a3ro-dev/whatsapp_api_wrapper/blob/main/CHANGELOG.md"
+
+[project.scripts]
+# No CLI scripts for this version
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["whatsapp_api_wrapper*"]
+exclude = ["tests*", "whatsapp-api*", "docs*"]
+
+[tool.setuptools.package-data]
+whatsapp_api_wrapper = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | whatsapp-api
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_glob = ["whatsapp-api/*"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "whatsapp_api_wrapper.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = [
+    "tests",
+]
+markers = [
+    "unit: marks tests as unit tests",
+    "integration: marks tests as integration tests",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+
+[tool.coverage.run]
+source = ["whatsapp_api_wrapper"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

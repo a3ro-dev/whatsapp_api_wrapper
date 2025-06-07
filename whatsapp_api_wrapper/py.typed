@@ -1,0 +1,2 @@
+# Marker file for PEP 561.
+# The whatsapp_api_wrapper package uses inline type annotations.

@@ -1,0 +1,10 @@
+include README.md
+include LICENSE
+include pyproject.toml
+recursive-include whatsapp_api_wrapper *.py
+recursive-include docs *.md
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
+recursive-exclude * *.orig
+recursive-exclude tests *
