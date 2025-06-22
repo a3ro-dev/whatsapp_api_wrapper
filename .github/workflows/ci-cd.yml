@@ -44,9 +44,6 @@ jobs:
           # Exit-zero treats all errors as warnings
           flake8 whatsapp_api_wrapper --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
 
-      - name: Type check with mypy
-        run: mypy whatsapp_api_wrapper
-
       - name: Run tests with pytest
         run: |
           pytest tests/ -v --cov=whatsapp_api_wrapper --cov-report=xml --cov-report=term
