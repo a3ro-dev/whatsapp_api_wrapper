@@ -2,9 +2,10 @@
 Pydantic models for request and response validation.
 """
 
-from typing import Optional, List, Dict, Any, Union
-from pydantic import BaseModel, Field, validator
 from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, Field, validator
 
 
 # Message Models (needed by tests)
@@ -13,7 +14,7 @@ class TextMessage(BaseModel):
     body: str = Field(..., description="Message text", min_length=1)
     type: str = Field(default="text", description="Message type")
 
-    @validator('to')
+    @validator("to")
     def validate_to(cls, v):
         if not v or not v.strip():
             raise ValueError("Recipient cannot be empty")
@@ -27,7 +28,7 @@ class MediaMessage(BaseModel):
     caption: Optional[str] = Field(None, description="Media caption")
     filename: Optional[str] = Field(None, description="Filename for documents")
 
-    @validator('to')
+    @validator("to")
     def validate_to(cls, v):
         if not v or not v.strip():
             raise ValueError("Recipient cannot be empty")
@@ -41,7 +42,7 @@ class LocationMessage(BaseModel):
     description: Optional[str] = Field(None, description="Location description")
     type: str = Field(default="location", description="Message type")
 
-    @validator('to')
+    @validator("to")
     def validate_to(cls, v):
         if not v or not v.strip():
             raise ValueError("Recipient cannot be empty")
@@ -53,7 +54,7 @@ class ContactMessage(BaseModel):
     contact: str = Field(..., description="Contact ID to share")
     type: str = Field(default="contact", description="Message type")
 
-    @validator('to')
+    @validator("to")
     def validate_to(cls, v):
         if not v or not v.strip():
             raise ValueError("Recipient cannot be empty")
@@ -72,7 +73,7 @@ class Contact(BaseModel):
     isMyContact: bool = Field(default=False, description="Is my contact")
     isBlocked: bool = Field(default=False, description="Is contact blocked")
 
-    @validator('id')
+    @validator("id")
     def validate_id(cls, v):
         if not v or not v.strip():
             raise ValueError("Contact ID cannot be empty")
@@ -91,7 +92,7 @@ class Chat(BaseModel):
     pinned: bool = Field(default=False, description="Is chat pinned")
     isMuted: bool = Field(default=False, description="Is chat muted")
 
-    @validator('timestamp')
+    @validator("timestamp")
     def validate_timestamp(cls, v):
         if v < 0:
             raise ValueError("Timestamp cannot be negative")
@@ -113,7 +114,7 @@ class GroupChat(BaseModel):
     owner: Optional[str] = Field(None, description="Group owner ID")
     description: Optional[str] = Field(None, description="Group description")
 
-    @validator('participants')
+    @validator("participants")
     def validate_participants(cls, v):
         if not v:
             raise ValueError("Group must have at least one participant")
@@ -127,7 +128,7 @@ class SessionStatusModel(BaseModel):
     ready: bool = Field(default=False, description="Is session ready")
     qr: Optional[str] = Field(None, description="QR code data")
 
-    @validator('sessionId')
+    @validator("sessionId")
     def validate_session_id(cls, v):
         if not v or not v.strip():
             raise ValueError("Session ID cannot be empty")
@@ -151,13 +152,13 @@ class SendMessageRequest(BaseModel):
     quotedMessageId: Optional[str] = Field(None, description="Quoted message ID")
     mentions: Optional[List[str]] = Field(None, description="Mentioned contacts")
 
-    @validator('to')
+    @validator("to")
     def validate_to(cls, v):
         if not v or not v.strip():
             raise ValueError("Recipient cannot be empty")
         return v
 
-    @validator('body')
+    @validator("body")
     def validate_body(cls, v):
         if not v or not v.strip():
             raise ValueError("Message body cannot be empty")
@@ -168,7 +169,7 @@ class GroupActionRequest(BaseModel):
     groupId: str = Field(..., description="Group WhatsApp ID")
     participants: List[str] = Field(..., description="Participant IDs", min_items=1)
 
-    @validator('participants')
+    @validator("participants")
     def validate_participants(cls, v):
         if not v:
             raise ValueError("Participants list cannot be empty")
@@ -203,7 +204,7 @@ class SessionStatus(BaseModel):
     qr: Optional[str] = Field(default=None, description="QR code data")
     webhook: Optional[str] = Field(default=None, description="Webhook URL")
 
-    @validator('sessionId')
+    @validator("sessionId")
     def validate_session_id(cls, v):
         if not v or not v.strip():
             raise ValueError("Session ID cannot be empty")
@@ -434,9 +435,11 @@ class GetAboutResponse(BaseResponse):
 # Group Chat Models
 class CreateGroupRequest(BaseModel):
     name: str = Field(..., description="Group name")
-    participants: List[str] = Field(..., description="List of participant contact IDs", min_length=1)
+    participants: List[str] = Field(
+        ..., description="List of participant contact IDs", min_length=1
+    )
 
-    @validator('participants')
+    @validator("participants")
     def validate_participants(cls, v):
         if not v:
             raise ValueError("Group must have at least one participant")
@@ -451,12 +454,12 @@ class AddParticipantsRequest(BaseModel):
     chatId: Optional[str] = Field(None, description="Group chat ID")
     groupId: Optional[str] = Field(None, description="Group ID (alias for chatId)")
     participants: List[str] = Field(..., description="List of contact IDs to add")
-    
+
     def __init__(self, **data):
         # Handle groupId -> chatId conversion for backward compatibility
-        if 'groupId' in data and 'chatId' not in data:
-            data['chatId'] = data['groupId']
-        elif 'chatId' not in data and 'groupId' not in data:
+        if "groupId" in data and "chatId" not in data:
+            data["chatId"] = data["groupId"]
+        elif "chatId" not in data and "groupId" not in data:
             raise ValueError("Either chatId or groupId must be provided")
         super().__init__(**data)
 
@@ -465,12 +468,12 @@ class RemoveParticipantsRequest(BaseModel):
     chatId: Optional[str] = Field(None, description="Group chat ID")
     groupId: Optional[str] = Field(None, description="Group ID (alias for chatId)")
     participants: List[str] = Field(..., description="List of contact IDs to remove")
-    
+
     def __init__(self, **data):
         # Handle groupId -> chatId conversion for backward compatibility
-        if 'groupId' in data and 'chatId' not in data:
-            data['chatId'] = data['groupId']
-        elif 'chatId' not in data and 'groupId' not in data:
+        if "groupId" in data and "chatId" not in data:
+            data["chatId"] = data["groupId"]
+        elif "chatId" not in data and "groupId" not in data:
             raise ValueError("Either chatId or groupId must be provided")
         super().__init__(**data)
 

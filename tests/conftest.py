@@ -1,11 +1,14 @@
 """
 Pytest configuration and fixtures for WhatsApp API wrapper tests.
 """
+
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock
+
 from whatsapp_api_wrapper import WhatsAppAPI
-from whatsapp_api_wrapper.models import *
 from whatsapp_api_wrapper.exceptions import *
+from whatsapp_api_wrapper.models import *
 
 
 @pytest.fixture
@@ -49,11 +52,7 @@ def mock_httpx_client():
 @pytest.fixture
 def sample_message_data():
     """Sample message data for testing."""
-    return {
-        "to": "1234567890@c.us",
-        "body": "Test message",
-        "type": "text"
-    }
+    return {"to": "1234567890@c.us", "body": "Test message", "type": "text"}
 
 
 @pytest.fixture
@@ -67,7 +66,7 @@ def sample_contact_data():
         "isGroup": False,
         "isUser": True,
         "isMyContact": True,
-        "isBlocked": False
+        "isBlocked": False,
     }
 
 
@@ -83,7 +82,7 @@ def sample_chat_data():
         "timestamp": 1623456789,
         "archived": False,
         "pinned": False,
-        "isMuted": False
+        "isMuted": False,
     }
 
 
@@ -96,10 +95,10 @@ def sample_group_data():
         "description": "Test group description",
         "participants": [
             {"id": "1111111111@c.us", "isAdmin": True},
-            {"id": "2222222222@c.us", "isAdmin": False}
+            {"id": "2222222222@c.us", "isAdmin": False},
         ],
         "admins": ["1111111111@c.us"],
-        "inviteCode": "test-invite-code"
+        "inviteCode": "test-invite-code",
     }
 
 
@@ -111,18 +110,14 @@ def sample_session_data():
         "ready": True,
         "qr": None,
         "status": "authenticated",
-        "webhook": None
+        "webhook": None,
     }
 
 
 @pytest.fixture
 def sample_error_response():
     """Sample error response data."""
-    return {
-        "success": False,
-        "error": "Test error message",
-        "code": "TEST_ERROR"
-    }
+    return {"success": False, "error": "Test error message", "code": "TEST_ERROR"}
 
 
 @pytest.fixture
@@ -130,10 +125,7 @@ def mock_successful_response():
     """Mock successful HTTP response."""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "success": True,
-        "data": {"message": "Operation successful"}
-    }
+    mock_response.json.return_value = {"success": True, "data": {"message": "Operation successful"}}
     mock_response.raise_for_status.return_value = None
     return mock_response
 
@@ -146,6 +138,6 @@ def mock_error_response():
     mock_response.json.return_value = {
         "success": False,
         "error": "Bad request",
-        "code": "BAD_REQUEST"
+        "code": "BAD_REQUEST",
     }
     return mock_response
