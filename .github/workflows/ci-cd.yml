@@ -1,0 +1,145 @@
+# Comprehensive CI/CD workflow for whatsapp-api-py
+name: Test, Build, and Publish
+
+on:
+  # Run tests on every push and PR
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  
+  # Publish to PyPI on releases
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  # Test job - runs on every push/PR
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint with flake8
+        run: |
+          # Stop the build if there are Python syntax errors or undefined names
+          flake8 whatsapp_api_wrapper --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all errors as warnings
+          flake8 whatsapp_api_wrapper --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+
+      - name: Check code formatting with black
+        run: black --check whatsapp_api_wrapper tests
+
+      - name: Check import sorting with isort
+        run: isort --check-only whatsapp_api_wrapper tests
+
+      - name: Type check with mypy
+        run: mypy whatsapp_api_wrapper
+
+      - name: Run tests with pytest
+        run: |
+          pytest tests/ -v --cov=whatsapp_api_wrapper --cov-report=xml --cov-report=term
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+
+  # Build job - only runs on releases
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'release'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Check distribution
+        run: twine check dist/*
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  # Publish job - only runs on releases after successful build
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'release'
+    
+    permissions:
+      # Required for trusted publishing
+      id-token: write
+    
+    environment:
+      name: pypi
+      # Official PyPI URL - NOT test.pypi.org
+      url: https://pypi.org/project/whatsapp-api-py/${{ github.event.release.tag_name }}
+    
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Pre-flight check
+        run: |
+          echo "🔍 Pre-flight checks for PyPI publishing..."
+          echo "📦 Package: whatsapp-api-py"
+          echo "🎯 Target: Official PyPI (https://pypi.org/)"
+          echo "🚫 NOT publishing to TestPyPI or any other repository"
+          echo "📋 Files to publish:"
+          ls -la dist/
+          
+      - name: Publish to PyPI (Official Repository Only)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Explicitly publish to official PyPI (this is the default)
+          repository-url: https://upload.pypi.org/legacy/
+          verbose: true
+          print-hash: true
+          
+      - name: Verify publication on PyPI
+        if: success()
+        run: |
+          echo "✅ Successfully published whatsapp-api-py ${{ github.event.release.tag_name }} to PyPI"
+          echo "📦 Package available at: https://pypi.org/project/whatsapp-api-py/${{ github.event.release.tag_name }}"
+          echo "🔍 Verifying package is live..."
+          sleep 30  # Wait for PyPI to propagate
+          pip index versions whatsapp-api-py || echo "Package not yet available via pip index"
