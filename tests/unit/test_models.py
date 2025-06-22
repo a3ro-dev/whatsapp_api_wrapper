@@ -5,7 +5,21 @@ Unit tests for WhatsApp API models.
 import pytest
 from pydantic import ValidationError
 
-from whatsapp_api_wrapper.models import *
+from whatsapp_api_wrapper.models import (
+    APIResponse,
+    Chat,
+    Contact,
+    ContactMessage,
+    CreateGroupRequest,
+    GroupActionRequest,
+    GroupChat,
+    GroupParticipant,
+    LocationMessage,
+    MediaMessage,
+    SendMessageRequest,
+    SessionStatus,
+    TextMessage,
+)
 
 
 class TestMessageModels:
@@ -44,7 +58,10 @@ class TestMessageModels:
     def test_location_message_valid(self):
         """Test valid location message creation."""
         message = LocationMessage(
-            to="1234567890@c.us", latitude=40.7128, longitude=-74.0060, description="New York City"
+            to="1234567890@c.us",
+            latitude=40.7128,
+            longitude=-74.0060,
+            description="New York City",
         )
         assert message.to == "1234567890@c.us"
         assert message.latitude == 40.7128
@@ -56,7 +73,9 @@ class TestMessageModels:
         """Test location message with invalid coordinates."""
         with pytest.raises(ValidationError):
             LocationMessage(
-                to="1234567890@c.us", latitude=200, longitude=-74.0060  # Invalid latitude
+                to="1234567890@c.us",
+                latitude=200,
+                longitude=-74.0060,  # Invalid latitude
             )
 
     def test_contact_message_valid(self):
@@ -73,7 +92,10 @@ class TestContactModels:
     def test_contact_valid(self):
         """Test valid contact creation."""
         contact = Contact(
-            id="1234567890@c.us", name="John Doe", pushname="John", number="1234567890"
+            id="1234567890@c.us",
+            name="John Doe",
+            pushname="John",
+            number="1234567890",
         )
         assert contact.id == "1234567890@c.us"
         assert contact.name == "John Doe"
@@ -237,7 +259,8 @@ class TestRequestModels:
     def test_create_group_request_valid(self):
         """Test valid create group request."""
         request = CreateGroupRequest(
-            name="Test Group", participants=["1111111111@c.us", "2222222222@c.us"]
+            name="Test Group",
+            participants=["1111111111@c.us", "2222222222@c.us"],
         )
         assert request.name == "Test Group"
         assert len(request.participants) == 2
@@ -250,7 +273,8 @@ class TestRequestModels:
     def test_group_action_request_valid(self):
         """Test valid group action request."""
         request = GroupActionRequest(
-            groupId="123456789-987654321@g.us", participants=["1111111111@c.us"]
+            groupId="123456789-987654321@g.us",
+            participants=["1111111111@c.us"],
         )
         assert request.groupId == "123456789-987654321@g.us"
         assert len(request.participants) == 1
@@ -259,5 +283,6 @@ class TestRequestModels:
         """Test group action request with empty participants."""
         with pytest.raises(ValidationError):
             GroupActionRequest(
-                groupId="123456789-987654321@g.us", participants=[]  # Empty participants
+                groupId="123456789-987654321@g.us",
+                participants=[],  # Empty participants
             )

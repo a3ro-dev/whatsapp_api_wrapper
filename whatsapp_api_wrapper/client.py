@@ -3,12 +3,10 @@ Main WhatsApp API client implementation.
 """
 
 import logging
-import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urljoin
 
 import httpx
-from pydantic import ValidationError as PydanticValidationError
 from tenacity import (
     RetryError,
     retry,
@@ -25,18 +23,94 @@ from .exceptions import (
     RateLimitError,
     SessionError,
     ValidationError,
-    WhatsAppAPIError,
-    WhatsAppAuthenticationError,
     WhatsAppConnectionError,
     WhatsAppHTTPError,
-    WhatsAppNotFoundError,
-    WhatsAppRateLimitError,
-    WhatsAppServerError,
     WhatsAppTimeoutError,
-    WhatsAppValidationError,
 )
-from .models import *
-from .utils import build_url, validate_session_id
+from .models import (
+    AcceptInviteRequest,
+    AddOrRemoveLabelsRequest,
+    AddParticipantsRequest,
+    ArchiveChatRequest,
+    BaseResponse,
+    BlockContactRequest,
+    ClearMessagesRequest,
+    ContactMessageRequest,
+    CreateGroupRequest,
+    CreateGroupResponse,
+    DeleteChatRequest,
+    DeleteMessageRequest,
+    DemoteParticipantsRequest,
+    DownloadMediaRequest,
+    DownloadMediaResponse,
+    FetchMessagesRequest,
+    ForwardMessageRequest,
+    GetAboutRequest,
+    GetAboutResponse,
+    GetBlockedContactsResponse,
+    GetChatByIdRequest,
+    GetChatByIdResponse,
+    GetChatLabelsRequest,
+    GetChatsByLabelIdRequest,
+    GetChatsResponse,
+    GetCommonGroupsRequest,
+    GetCommonGroupsResponse,
+    GetContactByIdRequest,
+    GetContactByIdResponse,
+    GetContactsResponse,
+    GetCountryCodeRequest,
+    GetCountryCodeResponse,
+    GetFormattedNumberRequest,
+    GetFormattedNumberResponse,
+    GetInviteCodeRequest,
+    GetInviteCodeResponse,
+    GetInviteInfoRequest,
+    GetInviteInfoResponse,
+    GetLabelByIdRequest,
+    GetLabelByIdResponse,
+    GetLabelsResponse,
+    GetMessagesResponse,
+    GetNumberIdRequest,
+    GetNumberIdResponse,
+    GetProfilePicUrlRequest,
+    GetProfilePicUrlResponse,
+    GetWWebVersionResponse,
+    IsRegisteredUserRequest,
+    IsRegisteredUserResponse,
+    LeaveGroupRequest,
+    LocationMessageRequest,
+    MarkChatUnreadRequest,
+    MediaMessageRequest,
+    MessageRequest,
+    MuteChatRequest,
+    PinChatRequest,
+    PingResponse,
+    PromoteParticipantsRequest,
+    QRCodeResponse,
+    ReactRequest,
+    RemoveParticipantsRequest,
+    RestartSessionResponse,
+    RevokeInviteRequest,
+    SearchMessagesRequest,
+    SendMessageResponse,
+    SendPresenceRequest,
+    SendSeenRequest,
+    SendStateRecordingRequest,
+    SendStateTypingRequest,
+    SetDisplayNameRequest,
+    SetGroupDescriptionRequest,
+    SetGroupPictureRequest,
+    SetGroupSubjectRequest,
+    SetInfoAdminsOnlyRequest,
+    SetMessagesAdminsOnlyRequest,
+    SetProfilePictureRequest,
+    SetStatusRequest,
+    StartSessionResponse,
+    StatusSessionResponse,
+    TerminateSessionResponse,
+    TerminateSessionsResponse,
+)
+from .utils import validate_session_id
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +120,8 @@ class WhatsAppAPI:
     WhatsApp API client with comprehensive error handling and retry logic.
 
     This client provides a strongly-typed interface to the WhatsApp Web API,
-    with automatic retries for transient failures, comprehensive error handling,
-    and response validation.
+    with automatic retries for transient failures, comprehensive error
+    handling, and response validation.
     """
 
     def __init__(
@@ -195,7 +269,7 @@ class WhatsAppAPI:
             if data:
                 logger.debug(f"Request data: {data}")
 
-            # Use context manager for httpx.Client to ensure mocking works properly
+            # Use context manager for httpx.Client to ensure mocking works
             with httpx.Client(timeout=httpx.Timeout(self.timeout), follow_redirects=True) as client:
                 # Use the expected call format for tests
                 if data:
@@ -223,11 +297,15 @@ class WhatsAppAPI:
                 return response
             elif response.status_code == 403:
                 raise AuthenticationError(
-                    f"Authentication failed: {response.text}", response.status_code, response.text
+                    f"Authentication failed: {response.text}",
+                    response.status_code,
+                    response.text,
                 )
             elif response.status_code == 404:
                 raise NotFoundError(
-                    f"Resource not found: {response.text}", response.status_code, response.text
+                    f"Resource not found: {response.text}",
+                    response.status_code,
+                    response.text,
                 )
             elif response.status_code == 422:
                 raise ValidationError(f"Validation error: {response.text}", response.text)
@@ -239,7 +317,9 @@ class WhatsAppAPI:
                 )
             elif response.status_code >= 500:
                 raise HTTPError(
-                    f"Server error: {response.text}", response.status_code, response.text
+                    f"Server error: {response.text}",
+                    response.status_code,
+                    response.text,
                 )
             else:
                 raise HTTPError(
@@ -257,7 +337,7 @@ class WhatsAppAPI:
 
     def _validate_response(self, response: httpx.Response, model_class) -> Dict[str, Any]:
         """
-        Validate response data against a Pydantic model and return as dictionary.
+        Validate response data against a Pydantic model and return as dict.
 
         Args:
             response: HTTP response object
@@ -272,13 +352,14 @@ class WhatsAppAPI:
         try:
             data = response.json()
 
-            # Handle nested response format with {"success": True, "data": {...}}
+            # Handle nested response format with {"success": True, "data": {}}
             if isinstance(data, dict) and "data" in data:
                 actual_data = data["data"]
             else:
                 actual_data = data
 
-            # For some responses, just return the data directly if validation fails
+            # For some responses, just return the data directly if
+            # validation fails
             try:
                 # Try to validate with Pydantic model
                 validated_model = model_class(**actual_data)
@@ -483,7 +564,9 @@ class WhatsAppAPI:
         return self._validate_response(response, GetChatsResponse)
 
     def get_chat_by_id(
-        self, session_id: str, request: Union[GetChatByIdRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[GetChatByIdRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Get a specific chat by ID.
@@ -524,7 +607,9 @@ class WhatsAppAPI:
         return self._validate_response(response, GetContactsResponse)
 
     def get_contact_by_id(
-        self, session_id: str, request: Union[GetContactByIdRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[GetContactByIdRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Get a specific contact by ID.
@@ -549,7 +634,9 @@ class WhatsAppAPI:
         return self._validate_response(response, GetContactByIdResponse)
 
     def archive_chat(
-        self, session_id: str, request: Union[ArchiveChatRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[ArchiveChatRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Archive a chat.
@@ -730,7 +817,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/isRegisteredUser/{session_id}", data=request.dict()
+            "POST",
+            f"/client/isRegisteredUser/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, IsRegisteredUserResponse)
 
@@ -768,7 +857,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/getProfilePicUrl/{session_id}", data=request.dict()
+            "POST",
+            f"/client/getProfilePicUrl/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetProfilePicUrlResponse)
 
@@ -825,7 +916,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/setProfilePicture/{session_id}", data=request.dict()
+            "POST",
+            f"/client/setProfilePicture/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -846,7 +939,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/sendPresenceAvailable/{session_id}", data=request.dict()
+            "POST",
+            f"/client/sendPresenceAvailable/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -867,12 +962,16 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/sendPresenceUnavailable/{session_id}", data=request.dict()
+            "POST",
+            f"/client/sendPresenceUnavailable/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
     def create_group(
-        self, session_id: str, request: Union[CreateGroupRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[CreateGroupRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Create a new group.
@@ -927,7 +1026,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/getCommonGroups/{session_id}", data=request.dict()
+            "POST",
+            f"/client/getCommonGroups/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetCommonGroupsResponse)
 
@@ -1032,7 +1133,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/getChatsByLabelId/{session_id}", data=request.dict()
+            "POST",
+            f"/client/getChatsByLabelId/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetChatsResponse)
 
@@ -1053,7 +1156,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/client/addOrRemoveLabels/{session_id}", data=request.dict()
+            "POST",
+            f"/client/addOrRemoveLabels/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1162,7 +1267,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/chat/sendStateRecording/{session_id}", data=request.dict()
+            "POST",
+            f"/chat/sendStateRecording/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1185,7 +1292,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/addParticipants/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/addParticipants/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1206,7 +1315,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/removeParticipants/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/removeParticipants/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1227,7 +1338,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/promoteParticipants/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/promoteParticipants/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1248,7 +1361,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/demoteParticipants/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/demoteParticipants/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1267,7 +1382,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/getInviteCode/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/getInviteCode/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetInviteCodeResponse)
 
@@ -1286,7 +1403,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/revokeInvite/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/revokeInvite/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1341,7 +1460,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/setDescription/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/setDescription/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1379,7 +1500,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/deletePicture/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/deletePicture/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1400,7 +1523,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/setMessagesAdminsOnly/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/setMessagesAdminsOnly/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1421,7 +1546,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/groupChat/setInfoAdminsOnly/{session_id}", data=request.dict()
+            "POST",
+            f"/groupChat/setInfoAdminsOnly/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, BaseResponse)
 
@@ -1430,7 +1557,9 @@ class WhatsAppAPI:
     # ===================
 
     def delete_message(
-        self, session_id: str, request: Union[DeleteMessageRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[DeleteMessageRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Delete a message.
@@ -1474,7 +1603,9 @@ class WhatsAppAPI:
         return self._validate_response(response, DownloadMediaResponse)
 
     def forward_message(
-        self, session_id: str, request: Union[ForwardMessageRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[ForwardMessageRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Forward a message.
@@ -1528,7 +1659,9 @@ class WhatsAppAPI:
     # ===================
 
     def block_contact(
-        self, session_id: str, request: Union[BlockContactRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[BlockContactRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Block a contact.
@@ -1603,7 +1736,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/contact/getProfilePicUrl/{session_id}", data=request.dict()
+            "POST",
+            f"/contact/getProfilePicUrl/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetProfilePicUrlResponse)
 
@@ -1624,7 +1759,9 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/contact/getFormattedNumber/{session_id}", data=request.dict()
+            "POST",
+            f"/contact/getFormattedNumber/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetFormattedNumberResponse)
 
@@ -1643,13 +1780,17 @@ class WhatsAppAPI:
             raise SessionError(f"Invalid session ID: {session_id}", session_id)
 
         response = self._request(
-            "POST", f"/contact/getCountryCode/{session_id}", data=request.dict()
+            "POST",
+            f"/contact/getCountryCode/{session_id}",
+            data=request.dict(),
         )
         return self._validate_response(response, GetCountryCodeResponse)
 
     # Method aliases for backward compatibility
     def add_group_participants(
-        self, session_id: str, request: Union[AddParticipantsRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[AddParticipantsRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Alias for add_participants method."""
         if isinstance(request, dict):
@@ -1657,7 +1798,9 @@ class WhatsAppAPI:
         return self.add_participants(session_id, request)
 
     def remove_group_participants(
-        self, session_id: str, request: Union[RemoveParticipantsRequest, Dict[str, Any]]
+        self,
+        session_id: str,
+        request: Union[RemoveParticipantsRequest, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Alias for remove_participants method."""
         if isinstance(request, dict):

@@ -2,13 +2,11 @@
 Pytest configuration and fixtures for WhatsApp API wrapper tests.
 """
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import Mock
 
 import pytest
 
 from whatsapp_api_wrapper import WhatsAppAPI
-from whatsapp_api_wrapper.exceptions import *
-from whatsapp_api_wrapper.models import *
 
 
 @pytest.fixture
@@ -117,7 +115,11 @@ def sample_session_data():
 @pytest.fixture
 def sample_error_response():
     """Sample error response data."""
-    return {"success": False, "error": "Test error message", "code": "TEST_ERROR"}
+    return {
+        "success": False,
+        "error": "Test error message",
+        "code": "TEST_ERROR",
+    }
 
 
 @pytest.fixture
@@ -125,7 +127,10 @@ def mock_successful_response():
     """Mock successful HTTP response."""
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "data": {"message": "Operation successful"}}
+    mock_response.json.return_value = {
+        "success": True,
+        "data": {"message": "Operation successful"},
+    }
     mock_response.raise_for_status.return_value = None
     return mock_response
 

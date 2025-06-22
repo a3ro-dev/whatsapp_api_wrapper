@@ -2,14 +2,18 @@
 Unit tests for WhatsApp API client.
 """
 
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import httpx
 import pytest
 
 from whatsapp_api_wrapper.client import WhatsAppAPI
-from whatsapp_api_wrapper.exceptions import *
-from whatsapp_api_wrapper.models import *
+from whatsapp_api_wrapper.exceptions import (
+    WhatsAppAPIError,
+    WhatsAppConnectionError,
+    WhatsAppHTTPError,
+    WhatsAppTimeoutError,
+)
 
 
 class TestWhatsAppAPIInit:
@@ -26,7 +30,10 @@ class TestWhatsAppAPIInit:
     def test_init_with_custom_values(self):
         """Test initialization with custom values."""
         api = WhatsAppAPI(
-            api_key="custom-key", base_url="https://api.example.com", timeout=60.0, max_retries=5
+            api_key="custom-key",
+            base_url="https://api.example.com",
+            timeout=60.0,
+            max_retries=5,
         )
         assert api.api_key == "custom-key"
         assert api.base_url == "https://api.example.com"
@@ -48,7 +55,10 @@ class TestWhatsAppAPIHttpMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"test": "data"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"test": "data"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -186,7 +196,10 @@ class TestSessionMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"qr": "qr-code-data"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"qr": "qr-code-data"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -254,7 +267,10 @@ class TestMessageMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"message": "Message deleted"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"message": "Message deleted"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -293,7 +309,10 @@ class TestMessageMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"message": "Reaction added"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"message": "Reaction added"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -356,7 +375,10 @@ class TestChatMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"message": "Chat archived"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"message": "Chat archived"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -419,7 +441,10 @@ class TestContactMethods:
         mock_client = Mock()
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"success": True, "data": {"message": "Contact blocked"}}
+        mock_response.json.return_value = {
+            "success": True,
+            "data": {"message": "Contact blocked"},
+        }
         mock_response.raise_for_status.return_value = None
         mock_client.request.return_value = mock_response
         mock_client.__enter__ = Mock(return_value=mock_client)
@@ -451,7 +476,10 @@ class TestGroupMethods:
         mock_client.__exit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
 
-        group_data = {"name": "Test Group", "participants": ["1111111111@c.us"]}
+        group_data = {
+            "name": "Test Group",
+            "participants": ["1111111111@c.us"],
+        }
         result = whatsapp_api.create_group(session_id, group_data)
 
         assert result["groupId"] == "group_123"
@@ -472,7 +500,10 @@ class TestGroupMethods:
         mock_client.__exit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
 
-        group_data = {"groupId": "group_123", "participants": ["2222222222@c.us"]}
+        group_data = {
+            "groupId": "group_123",
+            "participants": ["2222222222@c.us"],
+        }
         result = whatsapp_api.add_group_participants(session_id, group_data)
 
         assert result["message"] == "Participants added"
@@ -493,7 +524,10 @@ class TestGroupMethods:
         mock_client.__exit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
 
-        group_data = {"groupId": "group_123", "participants": ["2222222222@c.us"]}
+        group_data = {
+            "groupId": "group_123",
+            "participants": ["2222222222@c.us"],
+        }
         result = whatsapp_api.remove_group_participants(session_id, group_data)
 
         assert result["message"] == "Participants removed"

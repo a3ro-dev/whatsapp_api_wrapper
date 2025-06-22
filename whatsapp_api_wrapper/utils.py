@@ -5,7 +5,7 @@ Utility functions for the WhatsApp API wrapper.
 import re
 import time
 import uuid
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 from urllib.parse import quote, urljoin, urlparse
 
 
@@ -199,14 +199,24 @@ def parse_contact_id(contact_id: str) -> Dict[str, str]:
         number = contact_id.replace("@c.us", "")
         if not number:  # Empty number part
             raise ValueError("Invalid contact ID format")
-        return {"type": "individual", "number": number, "domain": "c.us", "full_id": contact_id}
+        return {
+            "type": "individual",
+            "number": number,
+            "domain": "c.us",
+            "full_id": contact_id,
+        }
 
     # Check if it's a group contact
     elif contact_id.endswith("@g.us"):
         group_part = contact_id.replace("@g.us", "")
         if not group_part:  # Empty group part
             raise ValueError("Invalid contact ID format")
-        return {"type": "group", "group_id": group_part, "domain": "g.us", "full_id": contact_id}
+        return {
+            "type": "group",
+            "group_id": group_part,
+            "domain": "g.us",
+            "full_id": contact_id,
+        }
 
     else:
         raise ValueError("Invalid contact ID format")
@@ -488,7 +498,10 @@ def build_pagination_params(page: int = 1, count: int = 20) -> Dict[str, Any]:
     Returns:
         Dictionary with pagination parameters
     """
-    return {"page": max(1, page), "count": max(1, min(100, count))}  # Limit to reasonable range
+    return {
+        "page": max(1, page),
+        "count": max(1, min(100, count)),
+    }  # Limit to reasonable range
 
 
 def clean_message_text(text: str) -> str:

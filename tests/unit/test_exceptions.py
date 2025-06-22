@@ -4,7 +4,20 @@ Unit tests for WhatsApp API exceptions.
 
 import pytest
 
-from whatsapp_api_wrapper.exceptions import *
+from whatsapp_api_wrapper.exceptions import (
+    WhatsAppAPIError,
+    WhatsAppAuthenticationError,
+    WhatsAppAuthorizationError,
+    WhatsAppConnectionError,
+    WhatsAppHTTPError,
+    WhatsAppMessageError,
+    WhatsAppNotFoundError,
+    WhatsAppRateLimitError,
+    WhatsAppServerError,
+    WhatsAppSessionError,
+    WhatsAppTimeoutError,
+    WhatsAppValidationError,
+)
 
 
 class TestWhatsAppExceptions:

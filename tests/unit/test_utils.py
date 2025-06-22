@@ -4,7 +4,23 @@ Unit tests for WhatsApp API utilities.
 
 import pytest
 
-from whatsapp_api_wrapper.utils import *
+from whatsapp_api_wrapper.utils import (
+    clean_phone_number,
+    extract_phone_number,
+    format_group_id,
+    format_phone_number,
+    format_timestamp,
+    generate_message_id,
+    get_timestamp,
+    is_group_id,
+    is_individual_id,
+    parse_contact_id,
+    sanitize_message_text,
+    validate_group_id,
+    validate_phone_number,
+    validate_session_id,
+    validate_url,
+)
 
 
 class TestValidationFunctions:
@@ -12,7 +28,11 @@ class TestValidationFunctions:
 
     def test_validate_phone_number_valid(self):
         """Test phone number validation with valid numbers."""
-        valid_numbers = ["1234567890@c.us", "911234567890@c.us", "+1234567890@c.us"]
+        valid_numbers = [
+            "1234567890@c.us",
+            "911234567890@c.us",
+            "+1234567890@c.us",
+        ]
 
         for number in valid_numbers:
             assert validate_phone_number(number) is True
@@ -58,7 +78,13 @@ class TestValidationFunctions:
 
     def test_validate_session_id_valid(self):
         """Test session ID validation with valid IDs."""
-        valid_ids = ["session1", "test-session", "my_session_123", "SESSION", "session.test"]
+        valid_ids = [
+            "session1",
+            "test-session",
+            "my_session_123",
+            "SESSION",
+            "session.test",
+        ]
 
         for session_id in valid_ids:
             assert validate_session_id(session_id) is True
@@ -103,7 +129,12 @@ class TestFormatFunctions:
 
     def test_format_phone_number_invalid(self):
         """Test phone number formatting with invalid input."""
-        invalid_inputs = ["", "abc", "123", "123456789012345"]  # Too short  # Too long
+        invalid_inputs = [
+            "",
+            "abc",
+            "123",
+            "123456789012345",
+        ]  # Too short  # Too long
 
         for invalid_input in invalid_inputs:
             with pytest.raises(ValueError):
@@ -157,7 +188,12 @@ class TestParsingFunctions:
 
     def test_parse_contact_id_invalid(self):
         """Test parsing invalid contact ID."""
-        invalid_ids = ["", "invalid", "1234567890", "@c.us"]  # Missing domain  # Missing number
+        invalid_ids = [
+            "",
+            "invalid",
+            "1234567890",
+            "@c.us",
+        ]  # Missing domain  # Missing number
 
         for invalid_id in invalid_ids:
             with pytest.raises(ValueError):

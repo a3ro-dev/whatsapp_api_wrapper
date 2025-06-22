@@ -53,7 +53,9 @@ class SessionError(WhatsAppAPIError):
 
     def __init__(self, message: str, session_id: str = None):
         super().__init__(
-            message, "SESSION_ERROR", {"session_id": session_id} if session_id else None
+            message,
+            "SESSION_ERROR",
+            {"session_id": session_id} if session_id else None,
         )
         self.session_id = session_id
 
@@ -63,7 +65,9 @@ class RateLimitError(HTTPError):
 
     def __init__(self, message: str = "Rate limit exceeded", retry_after: int = None):
         super().__init__(
-            message, 429, f"Retry after {retry_after} seconds" if retry_after else None
+            message,
+            429,
+            f"Retry after {retry_after} seconds" if retry_after else None,
         )
         self.retry_after = retry_after
 
@@ -72,7 +76,10 @@ class AuthenticationError(WhatsAppAPIError):
     """Raised when API key is invalid or missing."""
 
     def __init__(
-        self, message: str = "Invalid API key", status_code: int = None, response_body: str = None
+        self,
+        message: str = "Invalid API key",
+        status_code: int = None,
+        response_body: str = None,
     ):
         super().__init__(
             message,
