@@ -123,10 +123,14 @@ class TestWhatsAppAPIHttpMethods:
             whatsapp_api._make_request("GET", "/test")
 
     @patch("httpx.Client")
-    def test_make_request_connection_error(self, mock_client_class, whatsapp_api):
+    def test_make_request_connection_error(
+        self, mock_client_class, whatsapp_api
+    ):
         """Test connection error handling."""
         mock_client = Mock()
-        mock_client.request.side_effect = httpx.ConnectError("Connection failed")
+        mock_client.request.side_effect = httpx.ConnectError(
+            "Connection failed"
+        )
         mock_client.__enter__ = Mock(return_value=mock_client)
         mock_client.__exit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
@@ -165,7 +169,9 @@ class TestSessionMethods:
         )
 
     @patch("httpx.Client")
-    def test_get_session_status(self, mock_client_class, whatsapp_api, session_id):
+    def test_get_session_status(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test getting session status."""
         mock_client = Mock()
         mock_response = Mock()
@@ -211,7 +217,9 @@ class TestSessionMethods:
         assert result["qr"] == "qr-code-data"
 
     @patch("httpx.Client")
-    def test_terminate_session(self, mock_client_class, whatsapp_api, session_id):
+    def test_terminate_session(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test terminating a session."""
         mock_client = Mock()
         mock_response = Mock()
@@ -235,7 +243,9 @@ class TestMessageMethods:
     """Test message-related methods."""
 
     @patch("httpx.Client")
-    def test_send_message(self, mock_client_class, whatsapp_api, session_id, sample_message_data):
+    def test_send_message(
+        self, mock_client_class, whatsapp_api, session_id, sample_message_data
+    ):
         """Test sending a message."""
         mock_client = Mock()
         mock_response = Mock()
@@ -283,7 +293,9 @@ class TestMessageMethods:
         assert result["message"] == "Message deleted"
 
     @patch("httpx.Client")
-    def test_forward_message(self, mock_client_class, whatsapp_api, session_id):
+    def test_forward_message(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test forwarding a message."""
         mock_client = Mock()
         mock_response = Mock()
@@ -304,7 +316,9 @@ class TestMessageMethods:
         assert result["status"] == "forwarded"
 
     @patch("httpx.Client")
-    def test_react_to_message(self, mock_client_class, whatsapp_api, session_id):
+    def test_react_to_message(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test reacting to a message."""
         mock_client = Mock()
         mock_response = Mock()
@@ -415,7 +429,9 @@ class TestContactMethods:
         assert len(result["contacts"]) == 2
 
     @patch("httpx.Client")
-    def test_get_contact_by_id(self, mock_client_class, whatsapp_api, session_id):
+    def test_get_contact_by_id(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test getting a specific contact by ID."""
         mock_client = Mock()
         mock_response = Mock()
@@ -485,7 +501,9 @@ class TestGroupMethods:
         assert result["groupId"] == "group_123"
 
     @patch("httpx.Client")
-    def test_add_participants(self, mock_client_class, whatsapp_api, session_id):
+    def test_add_participants(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test adding participants to a group."""
         mock_client = Mock()
         mock_response = Mock()
@@ -509,7 +527,9 @@ class TestGroupMethods:
         assert result["message"] == "Participants added"
 
     @patch("httpx.Client")
-    def test_remove_participants(self, mock_client_class, whatsapp_api, session_id):
+    def test_remove_participants(
+        self, mock_client_class, whatsapp_api, session_id
+    ):
         """Test removing participants from a group."""
         mock_client = Mock()
         mock_response = Mock()

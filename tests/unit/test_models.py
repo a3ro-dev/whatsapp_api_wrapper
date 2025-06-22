@@ -80,7 +80,9 @@ class TestMessageModels:
 
     def test_contact_message_valid(self):
         """Test valid contact message creation."""
-        message = ContactMessage(to="1234567890@c.us", contact="9876543210@c.us")
+        message = ContactMessage(
+            to="1234567890@c.us", contact="9876543210@c.us"
+        )
         assert message.to == "1234567890@c.us"
         assert message.contact == "9876543210@c.us"
         assert message.type == "contact"
@@ -104,7 +106,9 @@ class TestContactModels:
 
     def test_contact_defaults(self):
         """Test contact with default values."""
-        contact = Contact(id="1234567890@c.us", name="John Doe", number="1234567890")
+        contact = Contact(
+            id="1234567890@c.us", name="John Doe", number="1234567890"
+        )
         assert contact.isGroup is False
         assert contact.isUser is True
         assert contact.isMyContact is False
@@ -122,14 +126,18 @@ class TestChatModels:
 
     def test_chat_valid(self):
         """Test valid chat creation."""
-        chat = Chat(id="1234567890@c.us", name="Test Chat", timestamp=1623456789)
+        chat = Chat(
+            id="1234567890@c.us", name="Test Chat", timestamp=1623456789
+        )
         assert chat.id == "1234567890@c.us"
         assert chat.name == "Test Chat"
         assert chat.timestamp == 1623456789
 
     def test_chat_defaults(self):
         """Test chat with default values."""
-        chat = Chat(id="1234567890@c.us", name="Test Chat", timestamp=1623456789)
+        chat = Chat(
+            id="1234567890@c.us", name="Test Chat", timestamp=1623456789
+        )
         assert chat.isGroup is False
         assert chat.isReadOnly is False
         assert chat.unreadCount == 0
@@ -140,7 +148,9 @@ class TestChatModels:
     def test_chat_invalid_timestamp(self):
         """Test chat with invalid timestamp."""
         with pytest.raises(ValidationError):
-            Chat(id="1234567890@c.us", name="Test Chat", timestamp=-1)  # Invalid timestamp
+            Chat(
+                id="1234567890@c.us", name="Test Chat", timestamp=-1
+            )  # Invalid timestamp
 
 
 class TestGroupModels:
@@ -192,7 +202,9 @@ class TestSessionModels:
 
     def test_session_status_valid(self):
         """Test valid session status creation."""
-        status = SessionStatus(sessionId="test-session", ready=True, status="authenticated")
+        status = SessionStatus(
+            sessionId="test-session", ready=True, status="authenticated"
+        )
         assert status.sessionId == "test-session"
         assert status.ready is True
         assert status.status == "authenticated"
@@ -207,7 +219,9 @@ class TestSessionModels:
     def test_session_status_invalid_id(self):
         """Test session status with invalid session ID."""
         with pytest.raises(ValidationError):
-            SessionStatus(sessionId="", status="authenticated")  # Empty session ID
+            SessionStatus(
+                sessionId="", status="authenticated"
+            )  # Empty session ID
 
 
 class TestResponseModels:
@@ -215,7 +229,9 @@ class TestResponseModels:
 
     def test_api_response_success(self):
         """Test successful API response."""
-        response = APIResponse(success=True, data={"message": "Operation successful"})
+        response = APIResponse(
+            success=True, data={"message": "Operation successful"}
+        )
         assert response.success is True
         assert response.data["message"] == "Operation successful"
         assert response.error is None
@@ -223,7 +239,9 @@ class TestResponseModels:
 
     def test_api_response_error(self):
         """Test error API response."""
-        response = APIResponse(success=False, error="Something went wrong", code="ERROR_CODE")
+        response = APIResponse(
+            success=False, error="Something went wrong", code="ERROR_CODE"
+        )
         assert response.success is False
         assert response.error == "Something went wrong"
         assert response.code == "ERROR_CODE"
@@ -268,7 +286,9 @@ class TestRequestModels:
     def test_create_group_request_empty_participants(self):
         """Test create group request with empty participants."""
         with pytest.raises(ValidationError):
-            CreateGroupRequest(name="Test Group", participants=[])  # Empty participants
+            CreateGroupRequest(
+                name="Test Group", participants=[]
+            )  # Empty participants
 
     def test_group_action_request_valid(self):
         """Test valid group action request."""

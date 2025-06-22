@@ -38,7 +38,9 @@ class TestWhatsAppExceptions:
     def test_whatsapp_api_error_with_details(self):
         """Test WhatsApp API error with additional details."""
         details = {"field": "value", "status": 400}
-        error = WhatsAppAPIError("Test error", error_code="TEST_ERROR", details=details)
+        error = WhatsAppAPIError(
+            "Test error", error_code="TEST_ERROR", details=details
+        )
         assert error.details == details
         assert error.details["field"] == "value"
 

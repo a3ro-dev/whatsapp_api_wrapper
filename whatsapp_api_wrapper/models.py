@@ -23,7 +23,9 @@ class TextMessage(BaseModel):
 class MediaMessage(BaseModel):
     to: str = Field(..., description="Recipient WhatsApp ID")
     media: str = Field(..., description="Media URL or base64")
-    type: str = Field(..., description="Media type (image, video, audio, document)")
+    type: str = Field(
+        ..., description="Media type (image, video, audio, document)"
+    )
     caption: Optional[str] = Field(None, description="Media caption")
     filename: Optional[str] = Field(None, description="Filename for documents")
 
@@ -36,9 +38,15 @@ class MediaMessage(BaseModel):
 
 class LocationMessage(BaseModel):
     to: str = Field(..., description="Recipient WhatsApp ID")
-    latitude: float = Field(..., description="Latitude coordinate", ge=-90, le=90)
-    longitude: float = Field(..., description="Longitude coordinate", ge=-180, le=180)
-    description: Optional[str] = Field(None, description="Location description")
+    latitude: float = Field(
+        ..., description="Latitude coordinate", ge=-90, le=90
+    )
+    longitude: float = Field(
+        ..., description="Longitude coordinate", ge=-180, le=180
+    )
+    description: Optional[str] = Field(
+        None, description="Location description"
+    )
     type: str = Field(default="location", description="Message type")
 
     @validator("to")
@@ -86,7 +94,9 @@ class Chat(BaseModel):
     timestamp: int = Field(..., description="Last message timestamp", ge=0)
     isGroup: bool = Field(default=False, description="Is group chat")
     isReadOnly: bool = Field(default=False, description="Is read-only")
-    unreadCount: int = Field(default=0, description="Unread message count", ge=0)
+    unreadCount: int = Field(
+        default=0, description="Unread message count", ge=0
+    )
     archived: bool = Field(default=False, description="Is chat archived")
     pinned: bool = Field(default=False, description="Is chat pinned")
     isMuted: bool = Field(default=False, description="Is chat muted")
@@ -102,14 +112,20 @@ class Chat(BaseModel):
 class GroupParticipant(BaseModel):
     id: str = Field(..., description="Participant WhatsApp ID")
     isAdmin: bool = Field(default=False, description="Is group admin")
-    isSuperAdmin: bool = Field(default=False, description="Is group super admin")
+    isSuperAdmin: bool = Field(
+        default=False, description="Is group super admin"
+    )
 
 
 class GroupChat(BaseModel):
     id: str = Field(..., description="Group WhatsApp ID")
     name: str = Field(..., description="Group name")
-    participants: List[GroupParticipant] = Field(..., description="Group participants", min_items=1)
-    admins: List[str] = Field(default_factory=list, description="Admin participant IDs")
+    participants: List[GroupParticipant] = Field(
+        ..., description="Group participants", min_items=1
+    )
+    admins: List[str] = Field(
+        default_factory=list, description="Admin participant IDs"
+    )
     owner: Optional[str] = Field(None, description="Group owner ID")
     description: Optional[str] = Field(None, description="Group description")
 
@@ -148,8 +164,12 @@ class SendMessageRequest(BaseModel):
     to: str = Field(..., description="Recipient WhatsApp ID")
     body: str = Field(..., description="Message text")
     type: str = Field(default="text", description="Message type")
-    quotedMessageId: Optional[str] = Field(None, description="Quoted message ID")
-    mentions: Optional[List[str]] = Field(None, description="Mentioned contacts")
+    quotedMessageId: Optional[str] = Field(
+        None, description="Quoted message ID"
+    )
+    mentions: Optional[List[str]] = Field(
+        None, description="Mentioned contacts"
+    )
 
     @validator("to")
     def validate_to(cls, v):
@@ -166,7 +186,9 @@ class SendMessageRequest(BaseModel):
 
 class GroupActionRequest(BaseModel):
     groupId: str = Field(..., description="Group WhatsApp ID")
-    participants: List[str] = Field(..., description="Participant IDs", min_items=1)
+    participants: List[str] = Field(
+        ..., description="Participant IDs", min_items=1
+    )
 
     @validator("participants")
     def validate_participants(cls, v):
@@ -191,7 +213,9 @@ class ErrorResponse(BaseResponse):
 class StartSessionResponse(BaseResponse):
     success: bool = True
     message: str = "Session initiated successfully"
-    sessionId: Optional[str] = Field(default=None, description="Session ID that was started")
+    sessionId: Optional[str] = Field(
+        default=None, description="Session ID that was started"
+    )
     status: Optional[str] = Field(default=None, description="Session status")
 
 
@@ -249,7 +273,9 @@ class TerminateSessionsResponse(BaseResponse):
 class MessageRequest(BaseModel):
     chatId: str = Field(..., description="WhatsApp chat ID")
     message: str = Field(..., description="Message content")
-    quotedMessageId: Optional[str] = Field(None, description="ID of message to quote")
+    quotedMessageId: Optional[str] = Field(
+        None, description="ID of message to quote"
+    )
 
 
 class MediaMessageRequest(BaseModel):
@@ -263,7 +289,9 @@ class LocationMessageRequest(BaseModel):
     chatId: str = Field(..., description="WhatsApp chat ID")
     latitude: float = Field(..., description="Latitude coordinate")
     longitude: float = Field(..., description="Longitude coordinate")
-    description: Optional[str] = Field(None, description="Location description")
+    description: Optional[str] = Field(
+        None, description="Location description"
+    )
 
 
 class ContactMessageRequest(BaseModel):
@@ -347,7 +375,9 @@ class ArchiveChatRequest(BaseModel):
 
 class MuteChatRequest(BaseModel):
     chatId: str = Field(..., description="WhatsApp chat ID")
-    duration: Optional[int] = Field(None, description="Mute duration in seconds")
+    duration: Optional[int] = Field(
+        None, description="Mute duration in seconds"
+    )
 
 
 class PinChatRequest(BaseModel):
@@ -451,8 +481,12 @@ class CreateGroupResponse(BaseResponse):
 
 class AddParticipantsRequest(BaseModel):
     chatId: Optional[str] = Field(None, description="Group chat ID")
-    groupId: Optional[str] = Field(None, description="Group ID (alias for chatId)")
-    participants: List[str] = Field(..., description="List of contact IDs to add")
+    groupId: Optional[str] = Field(
+        None, description="Group ID (alias for chatId)"
+    )
+    participants: List[str] = Field(
+        ..., description="List of contact IDs to add"
+    )
 
     def __init__(self, **data):
         # Handle groupId -> chatId conversion for backward compatibility
@@ -465,8 +499,12 @@ class AddParticipantsRequest(BaseModel):
 
 class RemoveParticipantsRequest(BaseModel):
     chatId: Optional[str] = Field(None, description="Group chat ID")
-    groupId: Optional[str] = Field(None, description="Group ID (alias for chatId)")
-    participants: List[str] = Field(..., description="List of contact IDs to remove")
+    groupId: Optional[str] = Field(
+        None, description="Group ID (alias for chatId)"
+    )
+    participants: List[str] = Field(
+        ..., description="List of contact IDs to remove"
+    )
 
     def __init__(self, **data):
         # Handle groupId -> chatId conversion for backward compatibility
@@ -479,12 +517,16 @@ class RemoveParticipantsRequest(BaseModel):
 
 class PromoteParticipantsRequest(BaseModel):
     chatId: str = Field(..., description="Group chat ID")
-    participants: List[str] = Field(..., description="List of contact IDs to promote")
+    participants: List[str] = Field(
+        ..., description="List of contact IDs to promote"
+    )
 
 
 class DemoteParticipantsRequest(BaseModel):
     chatId: str = Field(..., description="Group chat ID")
-    participants: List[str] = Field(..., description="List of contact IDs to demote")
+    participants: List[str] = Field(
+        ..., description="List of contact IDs to demote"
+    )
 
 
 class SetGroupSubjectRequest(BaseModel):
@@ -520,12 +562,16 @@ class LeaveGroupRequest(BaseModel):
 
 class SetMessagesAdminsOnlyRequest(BaseModel):
     chatId: str = Field(..., description="Group chat ID")
-    adminsOnly: bool = Field(..., description="Whether only admins can send messages")
+    adminsOnly: bool = Field(
+        ..., description="Whether only admins can send messages"
+    )
 
 
 class SetInfoAdminsOnlyRequest(BaseModel):
     chatId: str = Field(..., description="Group chat ID")
-    adminsOnly: bool = Field(..., description="Whether only admins can edit group info")
+    adminsOnly: bool = Field(
+        ..., description="Whether only admins can edit group info"
+    )
 
 
 # Client Models

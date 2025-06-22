@@ -6,7 +6,9 @@ Custom exceptions for the WhatsApp API wrapper.
 class WhatsAppAPIError(Exception):
     """Base exception for all WhatsApp API related errors."""
 
-    def __init__(self, message: str, error_code: str = None, details: dict = None):
+    def __init__(
+        self, message: str, error_code: str = None, details: dict = None
+    ):
         super().__init__(message)
         self.message = message
         self.error_code = error_code
@@ -26,7 +28,9 @@ class ConnectionError(WhatsAppAPIError):
 class HTTPError(WhatsAppAPIError):
     """Raised when the API returns a non-2xx HTTP status code."""
 
-    def __init__(self, message: str, status_code: int = None, response_body: str = None):
+    def __init__(
+        self, message: str, status_code: int = None, response_body: str = None
+    ):
         super().__init__(
             message,
             str(status_code) if status_code else None,
@@ -63,7 +67,9 @@ class SessionError(WhatsAppAPIError):
 class RateLimitError(HTTPError):
     """Raised when API rate limits are exceeded."""
 
-    def __init__(self, message: str = "Rate limit exceeded", retry_after: int = None):
+    def __init__(
+        self, message: str = "Rate limit exceeded", retry_after: int = None
+    ):
         super().__init__(
             message,
             429,
