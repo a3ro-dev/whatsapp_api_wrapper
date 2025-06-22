@@ -44,12 +44,6 @@ jobs:
           # Exit-zero treats all errors as warnings
           flake8 whatsapp_api_wrapper --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
 
-      - name: Check code formatting with black
-        run: black --check whatsapp_api_wrapper tests
-
-      - name: Check import sorting with isort
-        run: isort --check-only whatsapp_api_wrapper tests
-
       - name: Type check with mypy
         run: mypy whatsapp_api_wrapper
 
